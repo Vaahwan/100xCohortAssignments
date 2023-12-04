@@ -16,6 +16,56 @@
   Once you've implemented the logic, test your code by running
 */
 
-class Calculator {}
+class Calculator {
+  result = 0;
+
+  add(n){
+    this.result += n;
+  }
+
+  subtract(n){
+    this.result -= n;
+  }
+
+  multiply(n){
+    this.result = this.result*n;
+  }
+
+  divide(n){
+    if(n==0){
+      throw new Error;
+    }
+    this.result = this.result/n;
+  }
+
+  clear(){
+    this.result = 0;
+  }
+
+  getResult(){
+    if(this.result == Infinity){
+      throw new Error
+    }
+    return this.result;
+  }
+
+  calculate(str){
+    let strarr = str.split(" ");
+    let ans = eval(str);
+    if(ans==Infinity){
+      throw new Error;
+    }
+    this.result = ans;
+    return this.result;
+  }
+}
+
+let number = new Calculator;
+number.add(58);
+number.subtract(8);
+number.multiply(2);
+number.divide(10);
+// console.log(number.getResult());
+console.log(number.calculate('(2.5 + 1.5) * 3'))
 
 module.exports = Calculator;

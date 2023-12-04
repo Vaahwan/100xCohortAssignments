@@ -6,7 +6,18 @@
 */
 
 function countVowels(str) {
-    // Your code here
+  let numberOfVowels = 0;
+  for(let i=0; i<str.length; i++){
+    if(str.charAt(i)=='a' || str.charAt(i)=='e' || str.charAt(i)=='i' || str.charAt(i)=='o' || str.charAt(i)=='u'){
+      numberOfVowels++;
+    }
+    if(str.charAt(i)=='A' || str.charAt(i)=='E' || str.charAt(i)=='I' || str.charAt(i)=='O' || str.charAt(i)=='U'){
+      numberOfVowels++;
+    }
+  }
+  return numberOfVowels
 }
+
+console.log(countVowels("sunfeast"));
 
 module.exports = countVowels;
