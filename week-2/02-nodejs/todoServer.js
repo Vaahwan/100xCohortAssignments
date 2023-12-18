@@ -41,9 +41,141 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
+  const path = require('path')
+  const fs = require('fs')
   
   const app = express();
-  
   app.use(bodyParser.json());
+
+  const findIndexOf = (arr,id)=>{
+    for(let i=0; i<arr.length; i++){
+      if(arr[i].id==id){
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  app.get('/',(req,res)=>{
+    res.send("hello world")
+  })
+
+  app.get('/todos',(req,res)=>{
+    const pathname = path.join(__dirname,'./todos.json');
+    fs.readFile(pathname,'utf8',(err,data)=>{
+      if(err){
+        res.send('path not found').status(404);
+      }
+      res.send(JSON.parse(data));
+    })
+  })
+
+  app.get(`/todos/:id`,(req,res)=>{
+    const id = req.params.id;
+    const pathname = path.join(__dirname,'./todos.json');
+    fs.readFile(pathname,'utf8',(err,data)=>{
+      if(err){
+        res.send('path not found').status(404);
+      }
+      const todos = JSON.parse(data);
+      const index = findIndexOf(todos,id);
+      if(index==-1){
+        res.send(`given item can not be found`).status(404);
+      }
+      res.json(todos[index]);
+    })
+  })
+
+  app.post('/todos',(req,res)=>{
+    const todo = {
+      id : Math.floor(Math.random() * 1000000),
+      title : req.body.title,
+      description : req.body.description
+    }
+    const pathname = path.join(__dirname,'./todos.json');
+    fs.readFile(pathname,'utf8',(err,data)=>{
+      if(err){
+        res.send('cannot find pathname').status(404);
+      }
+
+      try{
+        const todos = JSON.parse(data);
+        todos.push(todo);
+        const todosString = JSON.stringify(todos);
+        fs.writeFile(pathname,todosString,'utf8',(err)=>{
+          if(err){
+            res.send('there is something wrong');
+          }
+          res.json(todo).status(201);
+        })
+      }
+      catch(error){
+        console.log(error);
+      }
+    })    
+  })
+
+  app.put('/todos/:id',(req,res)=>{
+    const pathname = path.join(__dirname,'./todos.json');
+    const id = req.params.id
+    fs.readFile(pathname,'utf8',(err,data)=>{
+      if(err){
+        res.send('path not found').status(404);
+      }
+      
+      try{
+        const todos = JSON.parse(data);
+        const index = findIndexOf(todos,id);
+        const updatedTodo = {
+          id : todos[index].id,
+          title : req.body.title,
+          description : req.body.description
+        }
+        todos[index] = updatedTodo;
+        const todosString = JSON.stringify(todos)
+        fs.writeFile(pathname,todosString,'utf8',(err)=>{
+          if(err){
+            res.send('cannot do update');
+          }
+          res.status(200).json(updatedTodo)
+        })
+      }
+      catch(error){
+        res.send(error);
+      }
+    })
+  })
+
+  app.delete('/todos/:id',(req,res)=>{
+    const pathname = path.join(__dirname,'./todos.json');
+    const id = parseInt(req.params.id)
+    fs.readFile(pathname,'utf8',(err,data)=>{
+      if(err){
+        res.send('path not found').status(404);
+      }
+      
+      try{
+        const todos = JSON.parse(data);
+        const index = findIndexOf(todos,id)
+        const deletedTodo = todos.splice(index,1);
+        const todosString = JSON.stringify(todos)
+        fs.writeFile(pathname,todosString,'utf8',(err)=>{
+          if(err){
+            res.send('cannot do update');
+          }
+          res.status(200).json(deletedTodo);
+        })
+      }
+      catch(error){
+        res.send(error);
+      }
+    })
+  })
+
+  
+  app.listen(5080,()=>{
+    console.log("app is listening on port :",5080)
+  });
+
   
   module.exports = app;
