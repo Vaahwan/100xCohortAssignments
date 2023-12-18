@@ -3,6 +3,15 @@
 */
 
 function wait(n) {
+    let prom = new Promise((n)=>{
+        return "before timeout"
+        setTimeout(()=>{
+            return "resolved";
+        },n)
+    });
+    return prom
 }
+
+wait(5).then((res,rej)=>{console.log(res,rej)})
 
 module.exports = wait;
