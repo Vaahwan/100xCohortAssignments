@@ -15,6 +15,8 @@ const jwtPassword = 'secret';
  */
 function signJwt(username, password) {
     // Your code here
+    let token = jwt.sign({username:username,password:password},jwtPassword);
+    return token;
 }
 
 /**
